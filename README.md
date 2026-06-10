@@ -15,16 +15,20 @@ Flask-приложение: по ссылке на курс генерирует
 ## Быстрый старт
 
 ```bash
+# 1. Установить зависимости
 pip install -r requirements.txt
 
-set OPENROUTER_API_KEY=sk-or-v1-...
-set VK_ACCESS_TOKEN=токен_вк
-set VK_GROUP_ID=айди_сообщества
+# 2. Создать файл .env в папке проекта (рядом с app.py)
+#    и записать в него ключи:
+#    OPENROUTER_API_KEY=sk-or-v1-твой_ключ
+#    VK_ACCESS_TOKEN=твой_токен
+#    VK_GROUP_ID=123456789
 
+# 3. Запустить
 python app.py
 ```
 
-Открой `http://127.0.0.1:5000`.
+Открой **http://127.0.0.1:5000**.
 
 ## Как подключить ВКонтакте
 
@@ -47,14 +51,17 @@ https://oauth.vk.com/authorize?client_id=ID_ПРИЛОЖЕНИЯ&scope=wall,grou
 
 Открой сообщество → **Управление** → **Работа с API** → **ID сообщества**.
 
-### 4. Запиши в `.env` (или переменные окружения)
+### 4. Запиши в `.env`
+
+Файл `.env` лежит в корне проекта и автоматически загружается при запуске (`python-dotenv`).
 
 ```
 VK_ACCESS_TOKEN=полученный_токен
 VK_GROUP_ID=айди_сообщества (без минуса)
+OPENROUTER_API_KEY=sk-or-v1-твой_ключ
 ```
 
-Токен должен иметь права `wall` и `groups`. Ключ `offline` даёт бессрочный доступ.
+Токен должен иметь права `wall` и `groups`. Параметр `offline` даёт бессрочный доступ.
 
 ## Структура проекта
 
@@ -100,7 +107,7 @@ post-generator/
 
 ## Выбор модели
 
-В `app.py` (строки 25–26):
+В `app.py` (найди строки `DEFAULT_MODEL` / `FALLBACK_MODEL`):
 
 ```python
 DEFAULT_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
