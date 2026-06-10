@@ -7,12 +7,16 @@ import threading
 from datetime import datetime
 from urllib.parse import urlparse
 
+from dotenv import load_dotenv
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, render_template, request
 
 import database as db
 import vk_api
+
+# Загружаем .env (если файла нет — ничего не ломается)
+load_dotenv()
 
 # ------------------------------------------------------------
 # Конфигурация
