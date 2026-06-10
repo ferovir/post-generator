@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор продающих постов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+  <style>
+    /* ========== СБРОС / БАЗА ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f4f6fb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #1a1d2e;
+    }
+    /* ========== КОНТЕЙНЕР ========== */
+    .container {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.07);
+      width: 100%;
+      max-width: 720px;
+      padding: 40px 44px;
+      transition: box-shadow 0.2s;
+    }
+    /* ========== ШАПКА ========== */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .header-icon {
+      width: 44px;
+      height: 44px;
+      background: #6c5ce7;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    /* ========== ФОРМА ========== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #f9fafb;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .input-wrapper input:focus {
+      border-color: #6c5ce7;
+      box-shadow: 0 0 0 3px rgba(108,92,231,0.12);
+      background: #fff;
+    }
+    /* ========== НАСТРОЕНИЯ ========== */
+    .mood-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .mood-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1.5px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #374151;
+      user-select: none;
+    }
+    .mood-btn:hover {
+      border-color: #c4b5fd;
+      background: #f5f3ff;
+    }
+    .mood-btn.active {
+      border-color: #6c5ce7;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-weight: 500;
+    }
+    .mood-btn input { display: none; }
+    /* ========== КНОПКА ГЕНЕРАЦИИ ========== */
+    .btn-generate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 14px;
+      background: #6c5ce7;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-generate:hover { background: #5b4bd1; }
+    .btn-generate:active { transform: scale(0.98); }
+    .btn-generate:disabled {
+      background: #a5b4fc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-generate .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .btn-generate.loading .spinner { display: inline-block; }
+    .btn-generate.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ========== РЕЗУЛЬТАТ ========== */
+    .result-section {
+      margin-top: 28px;
+      display: none;
+    }
+    .result-section.visible { display: block; }
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .result-header span {
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+    .result-box {
+      background: #f9fafb;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 20px 22px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #1f2937;
+    }
+    /* ========== КНОПКА КОПИРОВАНИЯ ========== */
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      margin-top: 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 30px;
+      background: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #374151;
+    }
+    .btn-copy:hover {
+      border-color: #c4b5fd;
+      background: #f5f3ff;
+    }
+    .btn-copy.copied {
+      border-color: #34d399;
+      background: #ecfdf5;
+      color: #065f46;
+    }
+    /* ========== СООБЩЕНИЕ ОБ ОШИБКЕ ========== */
+    .error-msg {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: #b91c1c;
+    }
+    .error-msg.visible { display: block; }
+    /* ========== ПОДВАЛ ========== */
+    .footer {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    /* ========== АДАПТАЦИЯ ========== */
+    @media (max-width: 540px) {
+      .container { padding: 24px 20px; }
+      .mood-btn { font-size: 13px; padding: 6px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ШАПКА -->
+    <div class="header">
+      <div class="header-icon">✍️</div>
+      <div>
+        <h1>Генератор продающих постов</h1>
+        <p>Для твоих обучающих курсов</p>
+      </div>
+    </div>
+
+    <!-- ФОРМА -->
+    <div class="form-group">
+      <label for="courseUrl">Ссылка на страницу курса</label>
+      <div class="input-wrapper">
+        <span class="icon">🔗</span>
+        <input
+          type="url"
+          id="courseUrl"
+          placeholder="https://example.com/course-slug"
+          autocomplete="url"
+          required
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Настроение поста</label>
+      <div class="mood-grid" id="moodGrid">
+        {% for m in moods %}
+        <label class="mood-btn{{ ' active' if loop.first else '' }}">
+          <input type="radio" name="mood" value="{{ m.id }}"{{ ' checked' if loop.first else '' }}>
+          {{ m.icon }} {{ m.label }}
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button class="btn-generate" id="btnGenerate" type="button">
+      <span class="btn-text">🚀 Сформировать пост</span>
+      <span class="spinner"></span>
+    </button>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- РЕЗУЛЬТАТ -->
+    <div class="result-section" id="resultSection">
+      <div class="result-header">
+        <span>📝 Готовый пост</span>
+      </div>
+      <div class="result-box" id="resultBox"></div>
+      <button class="btn-copy" id="btnCopy">📋 Скопировать пост</button>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <div class="footer">
+      <span>⚡ OpenRouter · Free models</span>
+      <span>v1.0</span>
+    </div>
+  </div>
+
+  <script>
+    // ========== Переключение настроения ==========
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        btn.querySelector('input').checked = true;
+      });
+    });
+
+    // ========== Генерация поста ==========
+    const btnGenerate = document.getElementById('btnGenerate');
+    const courseUrl   = document.getElementById('courseUrl');
+    const errorMsg    = document.getElementById('errorMsg');
+    const resultSection = document.getElementById('resultSection');
+    const resultBox   = document.getElementById('resultBox');
+    const btnCopy     = document.getElementById('btnCopy');
+
+    btnGenerate.addEventListener('click', async () => {
+      // Сброс
+      errorMsg.classList.remove('visible');
+      resultSection.classList.remove('visible');
+      btnCopy.classList.remove('copied');
+      btnCopy.textContent = '📋 Скопировать пост';
+
+      const url = courseUrl.value.trim();
+      if (!url) {
+        showError('Введите ссылку на страницу курса');
+        courseUrl.focus();
+        return;
+      }
+
+      // Простейшая валидация URL
+      try { new URL(url); } catch { showError('Некорректная ссылка'); return; }
+
+      const mood = document.querySelector('input[name="mood"]:checked').value;
+
+      // Состояние загрузки
+      btnGenerate.classList.add('loading');
+      btnGenerate.disabled = true;
+
+      try {
+        const resp = await fetch('/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, mood }),
+        });
+        const data = await resp.json();
+
+        if (!data.success) {
+          showError(data.error || 'Ошибка генерации');
+          return;
+        }
+
+        resultBox.innerHTML = renderMarkdown(data.post);
+        resultSection.classList.add('visible');
+      } catch (err) {
+        showError('Ошибка соединения с сервером');
+      } finally {
+        btnGenerate.classList.remove('loading');
+        btnGenerate.disabled = false;
+      }
+    });
+
+    // ========== Копирование (чистый текст, без HTML) ==========
+    btnCopy.addEventListener('click', async () => {
+      const text = resultBox.getAttribute('data-plain') || resultBox.textContent;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        btnCopy.textContent = '✅ Пост скопирован';
+        btnCopy.classList.add('copied');
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btnCopy.textContent = '✅ Пост скопирован';
+        btnCopy.classList.add('copied');
+      }
+    });
+
+    // ========== Ввод через Enter ==========
+    courseUrl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') btnGenerate.click();
+    });
+
+    // ========== Преобразование MD в HTML ==========
+    function renderMarkdown(text) {
+      // Экранируем HTML-спецсимволы перед конвертацией
+      let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // ***жирный курсив*** → <strong><em>
+      html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+      // **жирный** → <strong>
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      // *курсив* → <em>
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      // Перевод строк → <br>
+      html = html.replace(/\n/g, '<br>');
+
+      return html;
+    }
+
+    // ========== Сохраняем raw-текст для кнопки копировать ==========
+    const _origRender = renderMarkdown;
+    renderMarkdown = function(text) {
+      resultBox.setAttribute('data-plain', text);
+      return _origRender(text);
+    };
+
+    // ========== Вспомогательные функции ==========
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('visible');
+    }
+  </script>
+</body>
+</html>
