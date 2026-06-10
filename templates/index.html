@@ -7,244 +7,213 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
   <style>
-    /* ========== СБРОС / БАЗА ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: #f4f6fb;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 24px;
       color: #1a1d2e;
     }
-    /* ========== КОНТЕЙНЕР ========== */
     .container {
       background: #ffffff;
       border-radius: 28px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.07);
       width: 100%;
-      max-width: 720px;
-      padding: 40px 44px;
-      transition: box-shadow 0.2s;
+      max-width: 760px;
+      padding: 32px 40px;
+      margin: 0 auto;
     }
+    /* ========== ТАБЫ ========== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+      background: #f3f4f6;
+      border-radius: 14px;
+      padding: 4px;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 11px;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      color: #6b7280;
+      transition: all 0.15s;
+    }
+    .tab:hover { color: #374151; }
+    .tab.active {
+      background: #fff;
+      color: #1a1d2e;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     /* ========== ШАПКА ========== */
     .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
     }
     .header-icon {
-      width: 44px;
-      height: 44px;
-      background: #6c5ce7;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      color: #fff;
-      flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: #6c5ce7; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: #fff; flex-shrink: 0;
     }
-    .header h1 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-    .header p {
-      font-size: 14px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
+    .header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+    .header p { font-size: 14px; color: #6b7280; margin-top: 2px; }
+
     /* ========== ФОРМА ========== */
-    .form-group {
-      margin-bottom: 20px;
-    }
+    .form-group { margin-bottom: 18px; }
     .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: #374151;
-      margin-bottom: 6px;
+      display: block; font-size: 13px; font-weight: 500;
+      color: #374151; margin-bottom: 6px;
     }
-    .input-wrapper {
-      position: relative;
-    }
+    .input-wrapper { position: relative; }
     .input-wrapper .icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 16px;
-      opacity: 0.5;
-      pointer-events: none;
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); font-size: 16px;
+      opacity: 0.5; pointer-events: none;
     }
     .input-wrapper input {
       width: 100%;
       padding: 12px 14px 12px 40px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 15px;
-      font-family: inherit;
-      background: #f9fafb;
+      border: 1.5px solid #e5e7eb; border-radius: 12px;
+      font-size: 15px; font-family: inherit;
+      background: #f9fafb; outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
     }
     .input-wrapper input:focus {
       border-color: #6c5ce7;
       box-shadow: 0 0 0 3px rgba(108,92,231,0.12);
       background: #fff;
     }
-    /* ========== НАСТРОЕНИЯ ========== */
-    .mood-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .mood-grid { display: flex; flex-wrap: wrap; gap: 8px; }
     .mood-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 30px;
-      border: 1.5px solid #e5e7eb;
-      background: #f9fafb;
-      font-size: 14px;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.15s;
-      color: #374151;
-      user-select: none;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 30px;
+      border: 1.5px solid #e5e7eb; background: #f9fafb;
+      font-size: 14px; font-family: inherit; cursor: pointer;
+      transition: all 0.15s; color: #374151; user-select: none;
     }
-    .mood-btn:hover {
-      border-color: #c4b5fd;
-      background: #f5f3ff;
-    }
-    .mood-btn.active {
-      border-color: #6c5ce7;
-      background: #ede9fe;
-      color: #5b21b6;
-      font-weight: 500;
-    }
+    .mood-btn:hover { border-color: #c4b5fd; background: #f5f3ff; }
+    .mood-btn.active { border-color: #6c5ce7; background: #ede9fe; color: #5b21b6; font-weight: 500; }
     .mood-btn input { display: none; }
-    /* ========== КНОПКА ГЕНЕРАЦИИ ========== */
-    .btn-generate {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 14px 24px;
-      border: none;
-      border-radius: 14px;
-      background: #6c5ce7;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      margin-top: 8px;
+
+    /* ========== КНОПКИ ========== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 12px 24px; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.15s;
     }
-    .btn-generate:hover { background: #5b4bd1; }
-    .btn-generate:active { transform: scale(0.98); }
-    .btn-generate:disabled {
-      background: #a5b4fc;
-      cursor: not-allowed;
-      transform: none;
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-primary { background: #6c5ce7; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #5b4bd1; }
+    .btn-outline { background: #fff; color: #374151; border: 1.5px solid #e5e7eb; }
+    .btn-outline:hover:not(:disabled) { border-color: #c4b5fd; background: #f5f3ff; }
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-success:hover:not(:disabled) { background: #059669; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #dc2626; }
+    .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+    .btn-full { width: 100%; }
+    .btn .spinner {
+      display: none; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
     }
-    .btn-generate .spinner {
-      display: none;
-      width: 18px;
-      height: 18px;
-      border: 2.5px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    .btn-generate.loading .spinner { display: inline-block; }
-    .btn-generate.loading .btn-text { display: none; }
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
     /* ========== РЕЗУЛЬТАТ ========== */
-    .result-section {
-      margin-top: 28px;
-      display: none;
-    }
+    .result-section { margin-top: 24px; display: none; }
     .result-section.visible { display: block; }
-    .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .result-header span {
-      font-size: 13px;
-      font-weight: 500;
-      color: #6b7280;
-    }
     .result-box {
-      background: #f9fafb;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 20px 22px;
-      min-height: 100px;
-      white-space: pre-wrap;
-      font-size: 15px;
-      line-height: 1.65;
-      color: #1f2937;
+      background: #f9fafb; border: 1.5px solid #e5e7eb;
+      border-radius: 14px; padding: 20px 22px;
+      min-height: 100px; white-space: pre-wrap;
+      font-size: 15px; line-height: 1.65; color: #1f2937;
     }
-    /* ========== КНОПКА КОПИРОВАНИЯ ========== */
-    .btn-copy {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 18px;
-      margin-top: 12px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 30px;
-      background: #fff;
-      font-size: 14px;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.15s;
-      color: #374151;
+    .action-bar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 14px;
     }
-    .btn-copy:hover {
-      border-color: #c4b5fd;
-      background: #f5f3ff;
+
+    /* ========== ПЛАНИРОВЩИК (inline) ========== */
+    .schedule-form {
+      display: none; margin-top: 12px;
+      padding: 16px; background: #f9fafb;
+      border: 1.5px solid #e5e7eb; border-radius: 14px;
     }
-    .btn-copy.copied {
-      border-color: #34d399;
-      background: #ecfdf5;
-      color: #065f46;
+    .schedule-form.visible { display: block; }
+    .schedule-form input[type="datetime-local"] {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 15px; font-family: inherit; background: #fff;
+      outline: none; margin-bottom: 10px;
     }
-    /* ========== СООБЩЕНИЕ ОБ ОШИБКЕ ========== */
-    .error-msg {
-      display: none;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-top: 16px;
-      font-size: 14px;
-      color: #b91c1c;
+    .schedule-form .row { display: flex; gap: 8px; }
+
+    /* ========== ИЗБРАННОЕ / ЗАПЛАНИРОВАННЫЕ ========== */
+    .list-empty {
+      text-align: center; padding: 48px 20px;
+      color: #9ca3af; font-size: 14px;
     }
-    .error-msg.visible { display: block; }
+    .post-card {
+      background: #f9fafb; border: 1.5px solid #e5e7eb;
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 10px;
+    }
+    .post-card .meta {
+      font-size: 12px; color: #9ca3af; margin-bottom: 6px;
+    }
+    .post-card .text {
+      font-size: 14px; line-height: 1.6; color: #1f2937;
+      white-space: pre-wrap; max-height: 120px; overflow-y: auto;
+    }
+    .post-card .actions {
+      display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+    }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-published { background: #d1fae5; color: #065f46; }
+    .badge-failed { background: #fee2e2; color: #991b1b; }
+
+    /* ========== СООБЩЕНИЯ ========== */
+    .msg {
+      display: none; border-radius: 12px; padding: 12px 16px;
+      margin-top: 14px; font-size: 14px;
+    }
+    .msg.visible { display: block; }
+    .msg-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+    .msg-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+    .msg-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+
+    /* ========== VK СТАТУС ========== */
+    .vk-status { margin-bottom: 16px; }
+    .vk-status a { color: #6c5ce7; }
+
     /* ========== ПОДВАЛ ========== */
     .footer {
-      margin-top: 32px;
-      padding-top: 20px;
+      margin-top: 28px; padding-top: 18px;
       border-top: 1px solid #f0f0f0;
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #9ca3af;
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: #9ca3af;
     }
-    /* ========== АДАПТАЦИЯ ========== */
+
     @media (max-width: 540px) {
-      .container { padding: 24px 20px; }
+      .container { padding: 20px 16px; }
       .mood-btn { font-size: 13px; padding: 6px 12px; }
     }
   </style>
@@ -260,94 +229,181 @@
       </div>
     </div>
 
-    <!-- ФОРМА -->
-    <div class="form-group">
-      <label for="courseUrl">Ссылка на страницу курса</label>
-      <div class="input-wrapper">
-        <span class="icon">🔗</span>
-        <input
-          type="url"
-          id="courseUrl"
-          placeholder="https://example.com/course-slug"
-          autocomplete="url"
-          required
-        >
+    <!-- ТАБЫ -->
+    <div class="tabs">
+      <button class="tab active" data-tab="generator">🚀 Генератор</button>
+      <button class="tab" data-tab="favorites">⭐ Избранное</button>
+      <button class="tab" data-tab="scheduled">📅 Запланированные</button>
+    </div>
+
+    <!-- ==================== TAB: ГЕНЕРАТОР ==================== -->
+    <div class="tab-content active" id="tab-generator">
+
+      <!-- VK статус -->
+      <div class="vk-status" id="vkStatus"></div>
+
+      <!-- Ссылка -->
+      <div class="form-group">
+        <label for="courseUrl">Ссылка на страницу курса</label>
+        <div class="input-wrapper">
+          <span class="icon">🔗</span>
+          <input type="url" id="courseUrl" placeholder="https://example.com/course-slug" autocomplete="url" required>
+        </div>
+      </div>
+
+      <!-- Настроение -->
+      <div class="form-group">
+        <label>Настроение поста</label>
+        <div class="mood-grid" id="moodGrid">
+          {% for m in moods %}
+          <label class="mood-btn{{ ' active' if loop.first else '' }}">
+            <input type="radio" name="mood" value="{{ m.id }}"{{ ' checked' if loop.first else '' }}>
+            {{ m.icon }} {{ m.label }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Сгенерировать -->
+      <button class="btn btn-primary btn-full" id="btnGenerate" type="button">
+        <span class="btn-text">🚀 Сформировать пост</span>
+        <span class="spinner"></span>
+      </button>
+
+      <div class="msg msg-error" id="errorMsg"></div>
+
+      <!-- Результат + действия -->
+      <div class="result-section" id="resultSection">
+        <div class="result-box" id="resultBox"></div>
+        <div class="action-bar">
+          <button class="btn btn-success btn-sm" id="btnPublishVK">📤 Опубликовать VK</button>
+          <button class="btn btn-outline btn-sm" id="btnFavorite">⭐ В избранное</button>
+          <button class="btn btn-outline btn-sm" id="btnSchedule">📅 Запланировать</button>
+          <button class="btn btn-outline btn-sm" id="btnCopy">📋 Копировать</button>
+        </div>
+
+        <!-- Форма планировщика -->
+        <div class="schedule-form" id="scheduleForm">
+          <input type="datetime-local" id="scheduleDatetime">
+          <div class="row">
+            <button class="btn btn-primary btn-sm" id="btnScheduleConfirm">✅ Подтвердить</button>
+            <button class="btn btn-outline btn-sm" id="btnScheduleCancel">Отмена</button>
+          </div>
+          <div class="msg msg-success" id="scheduleMsg"></div>
+        </div>
+
+        <div class="msg msg-success" id="actionMsg"></div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>Настроение поста</label>
-      <div class="mood-grid" id="moodGrid">
-        {% for m in moods %}
-        <label class="mood-btn{{ ' active' if loop.first else '' }}">
-          <input type="radio" name="mood" value="{{ m.id }}"{{ ' checked' if loop.first else '' }}>
-          {{ m.icon }} {{ m.label }}
-        </label>
-        {% endfor %}
-      </div>
+    <!-- ==================== TAB: ИЗБРАННОЕ ==================== -->
+    <div class="tab-content" id="tab-favorites">
+      <div id="favoritesList"></div>
     </div>
 
-    <button class="btn-generate" id="btnGenerate" type="button">
-      <span class="btn-text">🚀 Сформировать пост</span>
-      <span class="spinner"></span>
-    </button>
-
-    <div class="error-msg" id="errorMsg"></div>
-
-    <!-- РЕЗУЛЬТАТ -->
-    <div class="result-section" id="resultSection">
-      <div class="result-header">
-        <span>📝 Готовый пост</span>
-      </div>
-      <div class="result-box" id="resultBox"></div>
-      <button class="btn-copy" id="btnCopy">📋 Скопировать пост</button>
+    <!-- ==================== TAB: ЗАПЛАНИРОВАННЫЕ ==================== -->
+    <div class="tab-content" id="tab-scheduled">
+      <div id="scheduledList"></div>
     </div>
 
     <!-- ПОДВАЛ -->
     <div class="footer">
       <span>⚡ OpenRouter · Free models</span>
-      <span>v1.0</span>
+      <span>v2.0</span>
     </div>
   </div>
 
   <script>
-    // ========== Переключение настроения ==========
+    // ====== Состояние ======
+    let currentPost = '';
+    let currentUrl  = '';
+    let currentMood = 'professional';
+
+    // ====== Табы ======
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+        if (btn.dataset.tab === 'favorites') loadFavorites();
+        if (btn.dataset.tab === 'scheduled') loadScheduled();
+      });
+    });
+
+    // ====== Mood ======
     document.querySelectorAll('.mood-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         btn.querySelector('input').checked = true;
+        currentMood = btn.querySelector('input').value;
       });
     });
 
-    // ========== Генерация поста ==========
-    const btnGenerate = document.getElementById('btnGenerate');
-    const courseUrl   = document.getElementById('courseUrl');
-    const errorMsg    = document.getElementById('errorMsg');
-    const resultSection = document.getElementById('resultSection');
-    const resultBox   = document.getElementById('resultBox');
-    const btnCopy     = document.getElementById('btnCopy');
+    // ====== DOM ======
+    const $ = id => document.getElementById(id);
+    const btnGenerate   = $('btnGenerate');
+    const courseUrl     = $('courseUrl');
+    const errorMsg      = $('errorMsg');
+    const resultSection = $('resultSection');
+    const resultBox     = $('resultBox');
+    const actionMsg     = $('actionMsg');
+    const scheduleForm  = $('scheduleForm');
+    const scheduleDatetime = $('scheduleDatetime');
+    const scheduleMsg   = $('scheduleMsg');
+    const vkStatus      = $('vkStatus');
 
-    btnGenerate.addEventListener('click', async () => {
-      // Сброс
+    // ====== VK статус при загрузке ======
+    fetch('/api/vk-status').then(r => r.json()).then(data => {
+      if (!data.configured) {
+        vkStatus.innerHTML = `<div class="msg msg-info visible">
+          ⚙️ VK не настроен. Чтобы публиковать посты, добавь переменные окружения 
+          <b>VK_ACCESS_TOKEN</b> и <b>VK_GROUP_ID</b>.
+          <a href="#" onclick="showVkGuide(event)">Как настроить →</a>
+        </div>`;
+      } else {
+        vkStatus.innerHTML = `<div class="msg msg-success visible">✅ VK подключён</div>`;
+      }
+    });
+
+    // ====== Гайд по VK ======
+    window.showVkGuide = function(e) {
+      e.preventDefault();
+      alert(
+        '🔑 Как подключить ВКонтакте:\n\n' +
+        '1. Перейди на https://vk.com/apps?act=manage\n' +
+        '2. Создай приложение (тип: Standalone)\n' +
+        '3. Скопируй ID приложения\n' +
+        '4. Открой в браузере:\n' +
+        '   https://oauth.vk.com/authorize?client_id=ID_ПРИЛОЖЕНИЯ&scope=wall,groups,offline&response_type=token&redirect_uri=https://oauth.vk.com/blank.html\n' +
+        '5. Разреши доступ — в URL будет access_token\n' +
+        '6. Открой сообщество → Управление → Работа с API → ID сообщества\n' +
+        '7. Запиши в .env:\n' +
+        '   VK_ACCESS_TOKEN=полученный_токен\n' +
+        '   VK_GROUP_ID=айди_сообщества (без минуса)\n\n' +
+        '⚠ Токен должен иметь права wall и groups.'
+      );
+    };
+
+    // ====== Генерация ======
+    btnGenerate.addEventListener('click', generatePost);
+    courseUrl.addEventListener('keydown', e => { if (e.key === 'Enter') generatePost(); });
+
+    async function generatePost() {
       errorMsg.classList.remove('visible');
       resultSection.classList.remove('visible');
-      btnCopy.classList.remove('copied');
-      btnCopy.textContent = '📋 Скопировать пост';
+      scheduleForm.classList.remove('visible');
+      actionMsg.classList.remove('visible');
 
       const url = courseUrl.value.trim();
-      if (!url) {
-        showError('Введите ссылку на страницу курса');
-        courseUrl.focus();
-        return;
-      }
-
-      // Простейшая валидация URL
+      if (!url) { showError('Введите ссылку'); courseUrl.focus(); return; }
       try { new URL(url); } catch { showError('Некорректная ссылка'); return; }
 
-      const mood = document.querySelector('input[name="mood"]:checked').value;
+      currentUrl = url;
+      currentMood = document.querySelector('input[name="mood"]:checked').value;
 
-      // Состояние загрузки
       btnGenerate.classList.add('loading');
       btnGenerate.disabled = true;
 
@@ -355,84 +411,249 @@
         const resp = await fetch('/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, mood }),
+          body: JSON.stringify({ url, mood: currentMood }),
         });
         const data = await resp.json();
 
-        if (!data.success) {
-          showError(data.error || 'Ошибка генерации');
-          return;
-        }
+        if (!data.success) { showError(data.error || 'Ошибка генерации'); return; }
 
+        currentPost = data.post;
         resultBox.innerHTML = renderMarkdown(data.post);
         resultSection.classList.add('visible');
-      } catch (err) {
-        showError('Ошибка соединения с сервером');
-      } finally {
-        btnGenerate.classList.remove('loading');
-        btnGenerate.disabled = false;
-      }
+      } catch { showError('Ошибка соединения'); }
+      finally { btnGenerate.classList.remove('loading'); btnGenerate.disabled = false; }
+    }
+
+    // ====== Публикация VK ======
+    $('btnPublishVK').addEventListener('click', async () => {
+      if (!currentPost) return;
+      actionMsg.classList.remove('visible');
+
+      const btn = $('btnPublishVK');
+      btn.disabled = true; btn.textContent = '⏳ Публикация...';
+
+      try {
+        const resp = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_text: currentPost }),
+        });
+        const data = await resp.json();
+        if (data.success) showAction('✅ Пост опубликован во ВКонтакте!', 'success');
+        else showAction('❌ ' + (data.error || 'Ошибка'), 'error');
+      } catch { showAction('❌ Ошибка сети', 'error'); }
+      finally { btn.disabled = false; btn.textContent = '📤 Опубликовать VK'; }
     });
 
-    // ========== Копирование (чистый текст, без HTML) ==========
-    btnCopy.addEventListener('click', async () => {
+    // ====== В избранное ======
+    $('btnFavorite').addEventListener('click', async () => {
+      if (!currentPost) return;
+      try {
+        const resp = await fetch('/api/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_text: currentPost, source_url: currentUrl, mood: currentMood }),
+        });
+        const data = await resp.json();
+        if (data.success) showAction('⭐ Пост сохранён в избранное!', 'success');
+        else showAction('❌ ' + (data.error || 'Ошибка'), 'error');
+      } catch { showAction('❌ Ошибка сети', 'error'); }
+    });
+
+    // ====== Копирование ======
+    $('btnCopy').addEventListener('click', async () => {
       const text = resultBox.getAttribute('data-plain') || resultBox.textContent;
       if (!text) return;
       try {
         await navigator.clipboard.writeText(text);
-        btnCopy.textContent = '✅ Пост скопирован';
-        btnCopy.classList.add('copied');
+        showAction('✅ Пост скопирован', 'success');
       } catch {
         const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed'; ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        btnCopy.textContent = '✅ Пост скопирован';
-        btnCopy.classList.add('copied');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        showAction('✅ Пост скопирован', 'success');
       }
     });
 
-    // ========== Ввод через Enter ==========
-    courseUrl.addEventListener('keydown', e => {
-      if (e.key === 'Enter') btnGenerate.click();
+    // ====== Планировщик (форма) ======
+    $('btnSchedule').addEventListener('click', () => {
+      if (!currentPost) return;
+      // Устанавливаем минимальное время = сейчас + 10 минут
+      const min = new Date(Date.now() + 10 * 60000);
+      const pad = n => String(n).padStart(2, '0');
+      scheduleDatetime.value =
+        min.getFullYear() + '-' + pad(min.getMonth()+1) + '-' + pad(min.getDate()) + 'T' +
+        pad(min.getHours()) + ':' + pad(min.getMinutes());
+      scheduleDatetime.min = scheduleDatetime.value;
+      scheduleForm.classList.add('visible');
+      scheduleMsg.classList.remove('visible');
     });
 
-    // ========== Преобразование MD в HTML ==========
+    $('btnScheduleCancel').addEventListener('click', () => {
+      scheduleForm.classList.remove('visible');
+    });
+
+    $('btnScheduleConfirm').addEventListener('click', async () => {
+      const dt = scheduleDatetime.value;
+      if (!dt) { scheduleMsg.textContent = '❌ Выбери дату и время'; scheduleMsg.className = 'msg msg-error visible'; return; }
+
+      const selected = new Date(dt);
+      if (selected <= new Date()) {
+        scheduleMsg.textContent = '❌ Время должно быть в будущем'; scheduleMsg.className = 'msg msg-error visible'; return;
+      }
+
+      scheduleMsg.className = 'msg visible'; scheduleMsg.textContent = '⏳ Сохраняем...';
+
+      try {
+        const resp = await fetch('/api/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_text: currentPost, publish_at: dt }),
+        });
+        const data = await resp.json();
+        if (data.success) {
+          scheduleMsg.className = 'msg msg-success visible';
+          scheduleMsg.textContent = '✅ Пост запланирован!';
+          scheduleForm.classList.remove('visible');
+          showAction('✅ Пост запланирован на ' + dt.replace('T', ' '), 'success');
+        } else {
+          scheduleMsg.className = 'msg msg-error visible';
+          scheduleMsg.textContent = '❌ ' + (data.error || 'Ошибка');
+        }
+      } catch {
+        scheduleMsg.className = 'msg msg-error visible';
+        scheduleMsg.textContent = '❌ Ошибка сети';
+      }
+    });
+
+    // ====== Избранное (загрузка) ======
+    async function loadFavorites() {
+      const container = $('favoritesList');
+      container.innerHTML = '<div class="list-empty">⏳ Загрузка...</div>';
+      try {
+        const resp = await fetch('/api/favorites');
+        const favs = await resp.json();
+        if (!favs.length) {
+          container.innerHTML = '<div class="list-empty">⭐ Избранных постов пока нет</div>';
+          return;
+        }
+        container.innerHTML = favs.map(f => `
+          <div class="post-card">
+            <div class="meta">📅 ${f.created_at} ${f.mood ? '· ' + f.mood : ''}</div>
+            <div class="text">${escapeHtml(f.post_text)}</div>
+            <div class="actions">
+              <button class="btn btn-success btn-sm" onclick="publishFavorite(${f.id})">📤 Опубликовать</button>
+              <button class="btn btn-outline btn-sm" onclick="scheduleFavorite(${f.id})">📅 Запланировать</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteFavorite(${f.id})">🗑 Удалить</button>
+            </div>
+          </div>
+        `).join('');
+      } catch { container.innerHTML = '<div class="list-empty">❌ Ошибка загрузки</div>'; }
+    }
+
+    window.publishFavorite = async function(id) {
+      const card = event.target.closest('.post-card');
+      const text = card.querySelector('.text').textContent;
+      try {
+        const resp = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_text: text }),
+        });
+        const data = await resp.json();
+        alert(data.success ? '✅ Пост опубликован!' : '❌ ' + (data.error || 'Ошибка'));
+      } catch { alert('❌ Ошибка сети'); }
+    };
+
+    window.scheduleFavorite = async function(id) {
+      const card = event.target.closest('.post-card');
+      const text = card.querySelector('.text').textContent;
+      const dt = prompt('Введи дату и время (ГГГГ-ММ-ДДTЧЧ:ММ):');
+      if (!dt) return;
+      try {
+        const resp = await fetch('/api/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_text: text, publish_at: dt }),
+        });
+        const data = await resp.json();
+        alert(data.success ? '✅ Запланировано!' : '❌ ' + (data.error || 'Ошибка'));
+        loadFavorites();
+      } catch { alert('❌ Ошибка сети'); }
+    };
+
+    window.deleteFavorite = async function(id) {
+      if (!confirm('Удалить из избранного?')) return;
+      try {
+        await fetch('/api/favorites/' + id, { method: 'DELETE' });
+        loadFavorites();
+      } catch { alert('❌ Ошибка'); }
+    };
+
+    // ====== Запланированные (загрузка) ======
+    async function loadScheduled() {
+      const container = $('scheduledList');
+      container.innerHTML = '<div class="list-empty">⏳ Загрузка...</div>';
+      try {
+        const resp = await fetch('/api/scheduled');
+        const posts = await resp.json();
+        if (!posts.length) {
+          container.innerHTML = '<div class="list-empty">📅 Запланированных постов нет</div>';
+          return;
+        }
+        const badges = { pending: 'badge-pending', published: 'badge-published', failed: 'badge-failed' };
+        const labels = { pending: '⏳ Ожидает', published: '✅ Опубликован', failed: '❌ Ошибка' };
+        container.innerHTML = posts.map(p => `
+          <div class="post-card">
+            <div class="meta">
+              🕐 ${p.publish_at}
+              <span class="badge ${badges[p.status] || 'badge-pending'}">${labels[p.status] || p.status}</span>
+              ${p.error ? '<span style="color:#b91c1c"> · ' + escapeHtml(p.error) + '</span>' : ''}
+            </div>
+            <div class="text">${escapeHtml(p.post_text)}</div>
+            <div class="actions">
+              ${p.status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="deleteScheduled(${p.id})">🗑 Отменить</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch { container.innerHTML = '<div class="list-empty">❌ Ошибка загрузки</div>'; }
+    }
+
+    window.deleteScheduled = async function(id) {
+      if (!confirm('Отменить публикацию?')) return;
+      try {
+        await fetch('/api/scheduled/' + id, { method: 'DELETE' });
+        loadScheduled();
+      } catch { alert('❌ Ошибка'); }
+    };
+
+    // ====== Утилиты ======
+    function showError(msg) { errorMsg.textContent = msg; errorMsg.classList.add('visible'); }
+    function showAction(msg, type) {
+      actionMsg.textContent = msg;
+      actionMsg.className = 'msg msg-' + type + ' visible';
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function renderMarkdown(text) {
-      // Экранируем HTML-спецсимволы перед конвертацией
-      let html = text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-      // ***жирный курсив*** → <strong><em>
+      let html = escapeHtml(text);
       html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
-      // **жирный** → <strong>
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      // *курсив* → <em>
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-      // Перевод строк → <br>
       html = html.replace(/\n/g, '<br>');
-
       return html;
     }
 
-    // ========== Сохраняем raw-текст для кнопки копировать ==========
+    // Храним raw-текст для копирования
     const _origRender = renderMarkdown;
     renderMarkdown = function(text) {
       resultBox.setAttribute('data-plain', text);
       return _origRender(text);
     };
-
-    // ========== Вспомогательные функции ==========
-    function showError(msg) {
-      errorMsg.textContent = msg;
-      errorMsg.classList.add('visible');
-    }
   </script>
 </body>
 </html>

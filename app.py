@@ -1,12 +1,18 @@
 import os
 import re
 import time
+import json
 import logging
+import threading
+from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, render_template, request
+
+import database as db
+import vk_api
 
 # ------------------------------------------------------------
 # Конфигурация
@@ -186,6 +192,37 @@ def call_openrouter(messages: list, model: str = DEFAULT_MODEL, retry: int = 1) 
 # ------------------------------------------------------------
 app = Flask(__name__)
 
+# Инициализация БД при первом запуске
+db.init_db()
+
+
+def start_scheduler():
+    """Фоновый поток: каждые 30 сек проверяет отложенные посты и публикует."""
+
+    def loop():
+        while True:
+            try:
+                with app.app_context():
+                    for post in db.get_pending_posts():
+                        result = vk_api.publish_post(post["post_text"])
+                        if "error" not in result:
+                            db.update_scheduled_status(post["id"], "published")
+                            logging.info(f"Опубликован отложенный пост #{post['id']}")
+                        else:
+                            err = result["error"].get("error_msg", "")
+                            db.update_scheduled_status(post["id"], "failed", err)
+                            logging.warning(f"Пост #{post['id']} не опубликован: {err}")
+            except Exception as e:
+                logging.error(f"Ошибка планировщика: {e}")
+            time.sleep(30)
+
+    thread = threading.Thread(target=loop, daemon=True)
+    thread.start()
+
+
+# Запускаем планировщик при старте
+start_scheduler()
+
 # Настроения поста — пользователь выбирает из списка
 MOOD_OPTIONS = [
     {"id": "professional", "label": "Деловой", "icon": "💼"},
@@ -272,6 +309,90 @@ def generate():
         return jsonify({"success": False, "error": "Нейросеть не вернула результат"}), 500
 
     return jsonify({"success": True, "post": post.strip()})
+
+
+# ------------------------------------------------------------
+# VK — публикация / статус
+# ------------------------------------------------------------
+
+@app.route("/api/vk-status")
+def vk_status():
+    """Проверяет, настроено ли подключение к ВКонтакте."""
+    return jsonify({"configured": vk_api.is_configured()})
+
+
+@app.route("/api/publish", methods=["POST"])
+def publish():
+    """Публикует пост в сообщество VK (сейчас или по расписанию)."""
+    data = request.get_json(silent=True) or {}
+    post_text = (data.get("post_text") or "").strip()
+    publish_date = data.get("publish_date")  # Unix-timestamp или None
+
+    if not post_text:
+        return jsonify({"success": False, "error": "Нет текста поста"}), 400
+
+    result = vk_api.publish_post(post_text, publish_date)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]["error_msg"]}), 400
+
+    return jsonify({"success": True, "response": result.get("response")})
+
+
+# ------------------------------------------------------------
+# Избранное
+# ------------------------------------------------------------
+
+@app.route("/api/favorites", methods=["GET"])
+def list_favorites():
+    favs = db.get_favorites()
+    return jsonify(favs)
+
+
+@app.route("/api/favorites", methods=["POST"])
+def add_favorite():
+    data = request.get_json(silent=True) or {}
+    post_text = (data.get("post_text") or "").strip()
+    if not post_text:
+        return jsonify({"success": False, "error": "Нет текста поста"}), 400
+    fav_id = db.add_favorite(post_text, data.get("source_url", ""), data.get("mood", ""))
+    return jsonify({"success": True, "id": fav_id})
+
+
+@app.route("/api/favorites/<int:fav_id>", methods=["DELETE"])
+def remove_favorite(fav_id):
+    db.delete_favorite(fav_id)
+    return jsonify({"success": True})
+
+
+# ------------------------------------------------------------
+# Отложенные посты
+# ------------------------------------------------------------
+
+@app.route("/api/scheduled", methods=["GET"])
+def list_scheduled():
+    posts = db.get_all_scheduled()
+    return jsonify(posts)
+
+
+@app.route("/api/schedule", methods=["POST"])
+def schedule_post():
+    data = request.get_json(silent=True) or {}
+    post_text = (data.get("post_text") or "").strip()
+    publish_at = (data.get("publish_at") or "").strip()
+
+    if not post_text:
+        return jsonify({"success": False, "error": "Нет текста поста"}), 400
+    if not publish_at:
+        return jsonify({"success": False, "error": "Не указано время публикации"}), 400
+
+    post_id = db.add_scheduled_post(post_text, publish_at)
+    return jsonify({"success": True, "id": post_id})
+
+
+@app.route("/api/scheduled/<int:post_id>", methods=["DELETE"])
+def remove_scheduled(post_id):
+    db.delete_scheduled(post_id)
+    return jsonify({"success": True})
 
 
 if __name__ == "__main__":
