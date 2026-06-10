@@ -1,3 +1,4 @@
+import re
 import os
 import requests
 
@@ -18,6 +19,25 @@ def is_configured():
     return bool(cfg["token"] and cfg["group_id"])
 
 
+def strip_markdown(text):
+    """Удаляет маркдаун-разметку, оставляя чистый текст для VK.
+
+    VK не всегда корректно обрабатывает **жирный** и *курсив*,
+    поэтому убираем оформление целиком.
+    """
+    # ***жирный курсив*** → текст
+    text = re.sub(r'\*\*\*(.+?)\*\*\*', r'\1', text)
+    # **жирный** → текст
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+    # *курсив* → текст
+    text = re.sub(r'\*(.+?)\*', r'\1', text)
+    # [ссылка](url) → ссылка
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
+    # `код` → код
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+    return text
+
+
 def publish_post(message, publish_date=None):
     """Публикует пост на стене сообщества ВКонтакте.
 
@@ -32,9 +52,12 @@ def publish_post(message, publish_date=None):
     if not cfg["token"] or not cfg["group_id"]:
         return {"error": {"error_msg": "VK не настроен. Укажи VK_ACCESS_TOKEN и VK_GROUP_ID."}}
 
+    # Очищаем текст от маркдауна — VK всё равно не применяет форматирование
+    clean_message = strip_markdown(message)
+
     params = {
         "owner_id": f"-{cfg['group_id']}",
-        "message": message,
+        "message": clean_message,
         "access_token": cfg["token"],
         "v": VK_API_VERSION,
         "from_group": 1,
