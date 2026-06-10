@@ -142,6 +142,25 @@
       border-radius: 14px; padding: 20px 22px;
       min-height: 100px; white-space: pre-wrap;
       font-size: 15px; line-height: 1.65; color: #1f2937;
+      position: relative;
+    }
+    .result-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .result-header span { font-size: 13px; font-weight: 500; color: #6b7280; }
+    .btn-edit {
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: #9ca3af; padding: 2px 6px;
+      border-radius: 6px; transition: all 0.15s; line-height: 1;
+    }
+    .btn-edit:hover { color: #6c5ce7; background: #f5f3ff; }
+    .edit-textarea {
+      width: 100%; min-height: 200px;
+      padding: 14px 16px; border: 1.5px solid #6c5ce7;
+      border-radius: 12px; font-size: 15px; line-height: 1.65;
+      font-family: inherit; background: #fff; outline: none;
+      resize: vertical;
     }
     .action-bar {
       display: flex; flex-wrap: wrap; gap: 8px;
@@ -274,12 +293,21 @@
 
       <!-- Результат + действия -->
       <div class="result-section" id="resultSection">
+        <div class="result-header">
+          <span>📝 Готовый пост</span>
+          <button class="btn-edit" id="btnEdit" title="Редактировать">✏️</button>
+        </div>
         <div class="result-box" id="resultBox"></div>
-        <div class="action-bar">
+        <textarea class="edit-textarea" id="editTextarea" style="display:none"></textarea>
+        <div class="action-bar" id="actionBar">
           <button class="btn btn-success btn-sm" id="btnPublishVK">📤 Опубликовать VK</button>
           <button class="btn btn-outline btn-sm" id="btnFavorite">⭐ В избранное</button>
           <button class="btn btn-outline btn-sm" id="btnSchedule">📅 Запланировать</button>
           <button class="btn btn-outline btn-sm" id="btnCopy">📋 Копировать</button>
+        </div>
+        <div class="action-bar" id="editActionBar" style="display:none">
+          <button class="btn btn-primary btn-sm" id="btnSaveEdit">💾 Сохранить</button>
+          <button class="btn btn-outline btn-sm" id="btnCancelEdit">Отмена</button>
         </div>
 
         <!-- Форма планировщика -->
@@ -354,6 +382,10 @@
     const scheduleDatetime = $('scheduleDatetime');
     const scheduleMsg   = $('scheduleMsg');
     const vkStatus      = $('vkStatus');
+    const editTextarea  = $('editTextarea');
+    const actionBar     = $('actionBar');
+    const editActionBar = $('editActionBar');
+    let isEditing = false;
 
     // ====== VK статус при загрузке ======
     fetch('/api/vk-status').then(r => r.json()).then(data => {
@@ -474,6 +506,43 @@
         document.execCommand('copy'); document.body.removeChild(ta);
         showAction('✅ Пост скопирован', 'success');
       }
+    });
+
+    // ====== Редактирование поста ======
+    $('btnEdit').addEventListener('click', () => {
+      if (!currentPost || isEditing) return;
+      isEditing = true;
+
+      const raw = resultBox.getAttribute('data-plain') || resultBox.textContent;
+      editTextarea.value = raw;
+      resultBox.style.display = 'none';
+      editTextarea.style.display = 'block';
+      actionBar.style.display = 'none';
+      editActionBar.style.display = 'flex';
+      editTextarea.focus();
+    });
+
+    $('btnCancelEdit').addEventListener('click', () => {
+      isEditing = false;
+      editTextarea.style.display = 'none';
+      resultBox.style.display = 'block';
+      editActionBar.style.display = 'none';
+      actionBar.style.display = 'flex';
+    });
+
+    $('btnSaveEdit').addEventListener('click', () => {
+      const newText = editTextarea.value.trim();
+      if (!newText) { showAction('❌ Текст не может быть пустым', 'error'); return; }
+
+      currentPost = newText;
+      resultBox.innerHTML = renderMarkdown(newText);
+
+      isEditing = false;
+      editTextarea.style.display = 'none';
+      resultBox.style.display = 'block';
+      editActionBar.style.display = 'none';
+      actionBar.style.display = 'flex';
+      showAction('✅ Пост сохранён', 'success');
     });
 
     // ====== Планировщик (форма) ======
